@@ -1,5 +1,6 @@
 #!/usr/bin/Python3
 """This module defines the engine for the MySQL database"""
+
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.state import State
@@ -70,5 +71,5 @@ class DBStorage:
         DBStorage.__session = Session()
 
     def close(self):
-        """public methodto to call remove method"""
+        """public method to to call remove method"""
         DBStorage.__session.close()
