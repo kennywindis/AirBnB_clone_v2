@@ -10,7 +10,7 @@ from os import path
 
 do_pack = __import__('1-pack_web_static').do_pack
 do_deploy = __import__('2-do_deploy_web_static').do_deploy
-env.hosts = ['34.75.185.85', '34.73.88.228']
+env.hosts = ['3.84.158.146', '54.144.239.204']
 
 
 def deploy():
