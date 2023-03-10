@@ -2,7 +2,8 @@
 """ Console Module """
 import cmd
 import sys
-from models.base_model import BaseModel, Base
+import shlex
+from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
 from models.place import Place
@@ -113,27 +114,42 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """Creates a new instance of BaseModel, saves it
+        Exceptions:
+            SyntaxError: when there is no args given
+            NameError: when there is no object taht has the name
+        """
+        if len(args) == 0:
+            print("** class name missing **")
+            return
         try:
-            if not args:
-                raise SyntaxError()
-            split1 = args.split(' ')
-            new_instance = eval('{}()'.format(split1[0]))
-            params = split1[1:]
-            for param in params:
-                k, v = param.split('=')
-                try:
-                    attribute = HBNBCommand.verify_attribute(v)
-                except:
-                    continue
-                if not attribute:
-                    continue
-                setattr(new_instance, k, attribute)
+            args = shlex.split(args, posix=False)
+            new_instance = eval(args[0])()
+            if len(args) > 1:
+                for i in range(1, len(args)):
+                    key, value = args[i].split('=')
+                    if value[0] == '"' and value[len(value) - 1] == '"':
+                        value = value[1:len(value) - 1]
+                        if '_' in value:
+                            value = value.replace('_', ' ')
+                        value = str(value)
+
+                    elif isinstance(eval(value), int):
+                        value = int(value)
+
+                    elif isinstance(eval(value), float):
+                        value = float(value)
+
+                    else:
+                        continue
+
+                    setattr(new_instance, key, value)
+
             new_instance.save()
             print(new_instance.id)
-        except SyntaxError:
-            print("** class name missing **")
-        except NameError as e:
+
+        except Exception as e:
+            print(e)
             print("** class doesn't exist **")
 
     def help_create(self):
@@ -209,19 +225,20 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        obj = storage.all()
         print_list = []
+
         if args:
             args = args.split(' ')[0]  # remove possible trailing args
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in obj.items():
+            for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in obj.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
+
         print(print_list)
 
     def help_all(self):
@@ -329,21 +346,6 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
-    @classmethod
-    def verify_attribute(cls, attribute):
-        """
-        Verify if the attribute is correctly formatted
-        """
-        if attribute[0] is attribute[-1] in ['"', "'"]:
-            return attribute.strip('"\'').replace('_', ' ').replace('\\', '"')
-        else:
-            try:
-                try:
-                    return int(attribute)
-                except ValueError:
-                    return float(attribute)
-            except ValueError:
-                return None
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
