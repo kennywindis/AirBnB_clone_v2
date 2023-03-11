@@ -5,7 +5,7 @@ Script to deploy a static website
 from datetime import datetime
 from fabric.api import *
 from os.path import exists
-env.hosts = ['35.227.77.93', '35.175.171.90']
+env.hosts = ['3.84.158.146', '54.144.239.204']
 
 
 def do_pack():
