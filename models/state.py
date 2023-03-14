@@ -1,38 +1,35 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
-import models
-from models.base_model import BaseModel
-from sqlalchemy import Column, String
-from models.base_model import Base
-from sqlalchemy.orm import relationship
+"""This is the state class"""
 from sqlalchemy.ext.declarative import declarative_base
+from models.base_model import BaseModel, Base
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
+import models
 from models.city import City
-import os
+import shlex
 
 
 class State(BaseModel, Base):
-    """ State class """
-    __tablename__ = 'states'
-    if os.getenv("HBNB_TYPE_STORAGE") == "db":
-        name = Column(String(128), nullable=False)
-        cities = relationship(
-            'City',
-            cascade="all,delete-orphan",
-            backref="state")
-    else:
-        name = ""
+    """This is the class for State
+    Attributes:
+        name: input name
+    """
+    __tablename__ = "states"
+    name = Column(String(128), nullable=False)
+    cities = relationship("City", cascade='all, delete, delete-orphan',
+                          backref="state")
 
-def __init__(self, *args, **kwargs):
-        """initializes state"""
-        super().__init__(*args, **kwargs)
-
-
-
-        @property
-        def cities(self):
-            """cities"""
-            cityArray = []
-            for item in models.storage.all(City).values():
-                if item.state_id == self.id:
-                    cityArray.append(item)
-            return cityArray
+    @property
+    def cities(self):
+        var = models.storage.all()
+        lista = []
+        result = []
+        for key in var:
+            city = key.replace('.', ' ')
+            city = shlex.split(city)
+            if (city[0] == 'City'):
+                lista.append(var[key])
+        for elem in lista:
+            if (elem.state_id == self.id):
+                result.append(elem)
+        return (result)
