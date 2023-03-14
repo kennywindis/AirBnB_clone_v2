@@ -57,4 +57,3 @@ def deploy():
         return False
     success = do_deploy(new)
     return(success)
-
