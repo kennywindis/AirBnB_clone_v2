@@ -8,7 +8,6 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
-import shlex
 
 
 class FileStorage:
@@ -26,15 +25,13 @@ class FileStorage:
         Return:
             returns a dictionary of __object
         """
-        dic = {}
         if cls:
-            dictionary = self.__objects
-            for key in dictionary:
-                partition = key.replace('.', ' ')
-                partition = shlex.split(partition)
-                if (partition[0] == cls.__name__):
-                    dic[key] = self.__objects[key]
-            return (dic)
+            new_dict = {}
+            for key_obj, value in self.__objects.items():
+                class_name = key_obj.split(".")
+                if class_name[0] == cls.__name__:
+                    new_dict[key_obj] = value
+            return new_dict
         else:
             return self.__objects
 
@@ -57,7 +54,7 @@ class FileStorage:
             json.dump(my_dict, f)
 
     def reload(self):
-        """serialize the file path to JSON file path
+        """deserialize the JSON file path
         """
         try:
             with open(self.__file_path, 'r', encoding="UTF-8") as f:
@@ -68,13 +65,13 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """ delete an existing element
+        """delete obj from __objects if it’s inside
         """
         if obj:
             key = "{}.{}".format(type(obj).__name__, obj.id)
-            del self.__objects[key]
+            if key in self.__objects:
+                del self.__objects[key]
 
     def close(self):
-        """ calls reload()
-        """
+        """call reload() method for deserializing the JSON file to objects"""
         self.reload()
