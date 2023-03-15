@@ -9,7 +9,7 @@ from os.path import exists
 
 
 env.hosts = ['3.84.158.146', '54.144.239.204']
-env.user= 'ubuntu'
+
 
 
 def do_pack():
