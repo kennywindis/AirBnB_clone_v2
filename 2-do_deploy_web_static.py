@@ -7,10 +7,7 @@ archive to the web servers
 from fabric.api import local, put, run, env 
 from os.path import exists
 
-
 env.hosts = ['3.84.158.146', '54.144.239.204']
-
-
 
 def do_pack():
     """Function that generates a .tgz archive from the contents of the
@@ -20,13 +17,11 @@ def do_pack():
         now = datetime.datetime.now()
         date = now.strftime("%Y%m%d%H%M%S")
         filename = "versions/web_static_" + date + ".tgz"
-        tar_cmd = "tar -cvzf " + filename + " web_static"
+        tar_cmd = "tar -cvzf" + filename + "web_static"
         local(tar_cmd)
         return filename
     except:
         return None
-
-
 
 def do_deploy(archive_path):
     """distributes an archive to the web servers"""
