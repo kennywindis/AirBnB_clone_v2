@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 """This is the state class"""
-from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
-from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String
-import models
+from sqlalchemy import Column, String, Integer, ForeignKey
+import os
 from models.city import City
-import shlex
+from sqlalchemy.orm import relationship
+import models
 
 
 class State(BaseModel, Base):
@@ -14,22 +13,22 @@ class State(BaseModel, Base):
     Attributes:
         name: input name
     """
-    __tablename__ = "states"
-    name = Column(String(128), nullable=False)
-    cities = relationship("City", cascade='all, delete, delete-orphan',
-                          backref="state")
+    __tablename__ = 'states'
+    if (os.getenv('HBNB_TYPE_STORAGE') != 'db'):
+        name = ''
 
-    @property
-    def cities(self):
-        var = models.storage.all()
-        lista = []
-        result = []
-        for key in var:
-            city = key.replace('.', ' ')
-            city = shlex.split(city)
-            if (city[0] == 'City'):
-                lista.append(var[key])
-        for elem in lista:
-            if (elem.state_id == self.id):
-                result.append(elem)
-        return (result)
+        @property
+        def cities(self):
+            """
+            Info
+            """
+            new_list = []
+            all_entries = models.storage.all(City)
+            for key, value in all_entries.items():
+                if self.id == value.state_id:
+                    new_list.append(value)
+
+            return new_list
+    else:
+        name = Column("name", String(128), nullable=False)
+        cities = relationship("City", cascade='all, delete', backref='state')
