@@ -10,18 +10,17 @@ from os.path import exists
 env.hosts = ['3.84.158.146', '54.144.239.204']
 
 def do_pack():
-    """Function that generates a .tgz archive from the contents of the
-    web_static"""
-    try:
-        local("mkdir -p versions")
-        now = datetime.datetime.now()
-        date = now.strftime("%Y%m%d%H%M%S")
-        filename = "versions/web_static_" + date + ".tgz"
-        tar_cmd = "tar -cvzf" + filename + "web_static"
-        local(tar_cmd)
-        return filename
-    except:
-        return None
+    """
+    Pack file into a .tgz archive
+    """
+    date = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = "versions/web_static_{}.tgz".format(date)
+    local("mkdir -p versions")
+    new = local("tar -czvf {} web_static".format(filename))
+    if new.succeeded:
+        return(filename)
+    else:
+        return(None)
 
 def do_deploy(archive_path):
     """distributes an archive to the web servers"""
