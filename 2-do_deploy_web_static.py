@@ -7,22 +7,26 @@ archive to the web servers
 from fabric.api import local, put, run, env 
 from os.path import exists
 
+
 env.hosts = ['3.84.158.146', '54.144.239.204']
 env.user= 'ubuntu'
 
+
 def do_pack():
-    """
-    Targginng project directory into a packages as .tgz
-    """
-    now = datetime.now().strftime("%Y%m%d%H%M%S")
-    local('sudo mkdir -p ./versions')
-    path = './versions/web_static_{}'.format(now)
-    local('sudo tar -czvf {}.tgz web_static'.format(path))
-    name = '{}.tgz'.format(path)
-    if name:
-        return name
-    else:
+    """Function that generates a .tgz archive from the contents of the
+    web_static"""
+    try:
+        local("mkdir -p versions")
+        now = datetime.datetime.now()
+        date = now.strftime("%Y%m%d%H%M%S")
+        filename = "versions/web_static_" + date + ".tgz"
+        tar_cmd = "tar -cvzf " + filename + " web_static"
+        local(tar_cmd)
+        return filename
+    except:
         return None
+
+
 
 def do_deploy(archive_path):
     """distributes an archive to the web servers"""
