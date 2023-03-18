@@ -20,10 +20,10 @@ class User(BaseModel, Base):
         reviews = relationship("Review", backref="user")
 
     else:
-        email = ""
-        password = ""
-        first_name = ""
-        last_name = ""
+        email = "kennyphilip100@gmail.com"
+        password = "pwd"
+        first_name = "fn"
+        last_name = "ln"
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
