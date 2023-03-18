@@ -20,7 +20,7 @@ class User(BaseModel, Base):
         reviews = relationship("Review", backref="user")
 
     else:
-        email = "kennyphilip100@gmail.com"
+        email = "a@a.com"
         password = "pwd"
         first_name = "fn"
         last_name = "ln"
